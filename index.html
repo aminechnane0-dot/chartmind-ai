@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ChartMind AI</title>
+<style>
+:root{--bg:#05080f;--s1:#0b1222;--s2:#111b30;--bd:#1c2a47;--tx:#e8eefc;--mu:#8b9bb8;--g:#16d68a;--r:#ff4d5e;--y:#f5b942;--b:#4d8dff;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:radial-gradient(900px 500px at 80% -10%,#0f2247 0,transparent 60%),var(--bg);color:var(--tx);font:15px/1.5 Inter,system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100vh}
+main{max-width:760px;margin:0 auto;padding:16px 16px 96px}
+h1,h2,h3{margin:0 0 8px;letter-spacing:-.01em}h1{font-size:26px}h2{font-size:20px}h3{font-size:16px}
+.mu{color:var(--mu)}.sm{font-size:13px}
+.card{background:linear-gradient(180deg,var(--s2),var(--s1));border:1px solid var(--bd);border-radius:16px;padding:16px;margin:12px 0;animation:in .35s ease both}
+@keyframes in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.btn{border:0;border-radius:12px;padding:12px 16px;font:600 15px inherit;font-family:inherit;color:#04210f;background:var(--g);cursor:pointer;transition:transform .15s,opacity .15s}
+.btn:active{transform:scale(.97)}.btn.sec{background:var(--s2);color:var(--tx);border:1px solid var(--bd)}.btn.dng{background:#3a1119;color:#ff8a96;border:1px solid #5a1b26}.btn:disabled{opacity:.45}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}.row>*{flex:1}
+nav{position:fixed;left:0;right:0;bottom:0;background:#070c18ee;backdrop-filter:blur(12px);border-top:1px solid var(--bd);display:flex;justify-content:center;padding:6px 6px calc(6px + env(safe-area-inset-bottom,0px))}
+nav button{flex:1;max-width:120px;background:none;border:0;color:var(--mu);font:600 11px inherit;font-family:inherit;padding:6px 2px;cursor:pointer}
+nav button b{display:block;font-size:20px;font-weight:400}nav button.on{color:var(--g)}
+.drop{border:2px dashed #2a3d66;border-radius:18px;padding:36px 16px;text-align:center;background:#0a1326;transition:.2s}
+.drop.hv{border-color:var(--g);background:#0b1f1c}
+.drop .ic{font-size:44px}
+.prev{width:100%;max-height:420px;object-fit:contain;border-radius:12px;background:#000;border:1px solid var(--bd)}
+.tag{display:inline-block;padding:3px 10px;border-radius:99px;font:700 12px inherit;font-family:inherit}
+.bull{background:#0d3a2a;color:var(--g)}.bear{background:#40131b;color:var(--r)}.neu{background:#2a2f3d;color:#aab4c8}
+.dec{text-align:center;padding:22px 12px;border-radius:18px;border:1px solid}
+.dec.BUY{background:#0a2a1f;border-color:#157a55;color:var(--g)}.dec.SELL{background:#2d0f16;border-color:#8a2634;color:var(--r)}.dec.WAIT{background:#2a2410;border-color:#7a6320;color:var(--y)}
+.dec .v{font-size:38px;font-weight:800;letter-spacing:.02em}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.grid3>div{background:var(--s1);border:1px solid var(--bd);border-radius:12px;padding:10px;text-align:center}.grid3 b{font-size:24px;display:block}
+.kv{display:grid;grid-template-columns:110px 1fr;gap:6px 10px;font-size:14px}.kv dt{color:var(--mu)}.kv dd{margin:0}
+.spin{width:44px;height:44px;border:4px solid #1c2a47;border-top-color:var(--g);border-radius:50%;animation:sp 1s linear infinite;margin:10px auto}@keyframes sp{to{transform:rotate(360deg)}}
+.err{background:#2d0f16;border:1px solid #8a2634;color:#ffb3bb;border-radius:12px;padding:12px;margin:12px 0}
+.warn{background:#2a2410;border:1px solid #7a6320;color:#f5d98a;border-radius:12px;padding:12px;margin:12px 0}
+.hist{display:flex;gap:12px;align-items:center;cursor:pointer}.hist img{width:72px;height:56px;object-fit:cover;border-radius:8px;border:1px solid var(--bd)}.hist>div{flex:1;min-width:0}
+.tabs{display:flex;gap:6px;margin:8px 0}.tabs button{flex:1}
+.ar{direction:rtl;text-align:right;font-family:"Segoe UI",Tahoma,Arial,sans-serif;line-height:1.8}
+.strat{border-left:4px solid var(--bd)}.strat.bull{border-left-color:var(--g)}.strat.bear{border-left-color:var(--r)}
+ul{margin:4px 0;padding-left:20px}select,input[type=range]{width:100%;padding:10px;background:var(--s1);color:var(--tx);border:1px solid var(--bd);border-radius:10px;font:inherit}
+.fi{position:fixed;left:0;top:0;width:1px;height:1px;opacity:0;overflow:hidden;pointer-events:none}label.btn{display:block;text-align:center;-webkit-tap-highlight-color:transparent}.drop{cursor:pointer}
+.hero{padding:6px 0 4px}.hero h1 span{color:var(--g)}
+</style></head><body>
+<main id="app"></main>
+<nav id="nav"></nav>
+<input type="file" id="fgal" class="fi" accept="image/*">
+<input type="file" id="ffile" class="fi" accept="image/*,.jpg,.jpeg,.png,.webp">
+<input type="file" id="fcam" class="fi" accept="image/*" capture="environment">
+<script>
+"use strict";
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const STRATS=[["ema","EMA 20 / EMA 200","المتوسطات 20 / 200"],["sr","Support & Resistance","الدعم والمقاومة"],["sd","Supply & Demand","العرض والطلب"],["ob","Order Blocks","كتل الأوامر"],["fvg","Fair Value Gaps","فجوات القيمة العادلة"],["liq","Liquidity Analysis","تحليل السيولة"],["brt","Breakout & Retest","الاختراق وإعادة الاختبار"]];
+const store={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v));return true}catch(e){return false}}};
+let S={view:"home",lang:store.get("cm_lang","en"),minAgree:store.get("cm_min",4),hist:store.get("cm_hist",[]),file:null,prev:null,busy:false,err:null,cur:null,mem:false};
+let sampleNS=null;
+function go(v){S.view=v;S.err=null;render();scrollTo(0,0)}
+const T=o=>o==null?"":(typeof o==="string"?o:(o[S.lang]||o.en||o.ar||""));
+const isAr=()=>S.lang==="ar";
+function langTabs(){return `<div class="tabs"><button class="btn sec" style="${!isAr()?'outline:2px solid var(--g)':''}" onclick="setLang('en')">English</button><button class="btn sec" style="${isAr()?'outline:2px solid var(--g)':''}" onclick="setLang('ar')">العربية</button></div>`}
+function setLang(l){S.lang=l;store.set("cm_lang",l);render()}
+const tx=o=>{const t=T(o);return `<span class="${isAr()?'ar':''}" ${isAr()?'dir="rtl"':''}>${esc(t)||'<span class="mu">—</span>'}</span>`};
+const txb=o=>`<div ${isAr()?'dir="rtl" class="ar"':''}>${esc(T(o))||'<span class="mu">—</span>'}</div>`;
+const lst=a=>{const arr=Array.isArray(a)?a:[];return arr.length?`<ul ${isAr()?'dir="rtl" class="ar"':''}>${arr.map(x=>`<li>${esc(T(x))}</li>`).join("")}</ul>`:'<span class="mu">—</span>'};
+function tag(b){const k=String(b||"").toLowerCase();const c=k==="bullish"?"bull":k==="bearish"?"bear":"neu";const n={bullish:["Bullish","صاعد"],bearish:["Bearish","هابط"],neutral:["Neutral","محايد"]}[k]||["Neutral","محايد"];return `<span class="tag ${c}">${isAr()?n[1]:n[0]}</span>`}
+
+function render(){
+  const v=S.view;
+  const nav=[["home","⌂","Home"],["upload","⬆","Upload"],["results","◎","Results"],["history","🕘","History"],["settings","⚙","Settings"]];
+  $("#nav").innerHTML=nav.map(n=>`<button class="${(v===n[0]||(v==="strategies"&&n[0]==="results"))?'on':''}" onclick="go('${n[0]}')"><b>${n[1]}</b>${n[2]}</button>`).join("");
+  $("#app").innerHTML=({home,upload,results,strategies,history:historyView,settings})[v]();
+  bind();
+}
+function home(){
+  const last=S.hist.slice(0,3);
+  return `<div class="hero"><h1>Chart<span>Mind</span> AI</h1><p class="mu">Upload a chart screenshot. Seven independent strategies inspect it, and you only get a trade idea when the evidence agrees.</p></div>
+  <div class="card"><div class="row"><div><h3>Analyze a chart</h3><div class="sm mu">Forex, gold, crypto, stocks, indices, commodities. Screenshots only, no broker needed.</div></div><button class="btn" style="flex:0 0 auto" onclick="go('upload');pick('gal')">Upload chart</button></div></div>
+  <div class="grid3"><div><b>${S.hist.length}</b><span class="sm mu">Analyses</span></div><div><b style="color:var(--g)">${S.hist.filter(h=>h.decision==="BUY").length}</b><span class="sm mu">Buy</span></div><div><b style="color:var(--r)">${S.hist.filter(h=>h.decision==="SELL").length}</b><span class="sm mu">Sell</span></div></div>
+  <div class="card"><h3>The 7 strategies</h3><div class="row" style="gap:6px">${STRATS.map(s=>`<span class="tag neu" style="flex:0 0 auto">${s[1]}</span>`).join("")}</div>
+  <p class="sm mu" style="margin-bottom:0">WAIT is a valid and often the best result. The app never promises a winning trade. Trading carries risk; this is not financial advice.</p></div>
+  <h3 style="margin-top:20px">Recent</h3>${last.length?last.map(histItem).join(""):'<div class="card mu">No analyses yet. Upload your first chart.</div>'}`;
+}
+function upload(){
+  if(S.busy)return `<div class="card" style="text-align:center"><div class="spin"></div><h3>Inspecting your chart…</h3><p class="mu sm">Reading the screenshot and running all 7 strategies. This can take up to a minute.</p></div>`;
+  return `<h2>Upload chart</h2>
+  ${S.err?`<div class="err">${esc(S.err)}</div>`:""}
+  ${S.prev?`<div class="card"><img class="prev" src="${S.prev}" alt="Chart preview"><div class="sm mu" style="margin-top:8px">Selected: ${esc(S.fname||"")}</div><div class="row" style="margin-top:12px"><label class="btn sec" for="fgal" data-pick="gal">Replace</label><button class="btn dng" onclick="clearImg()">Remove</button></div><button class="btn" style="width:100%;margin-top:10px" onclick="analyze()">Analyze chart</button></div>`
+  :`<div class="drop" id="drop"><div class="ic">📈</div><h3>Drop a chart screenshot here</h3><p class="mu sm">JPG, PNG or WEBP, up to 10 MB. Include candles, price scale, and timeframe if possible.</p><div class="row"><label class="btn" for="fgal" data-pick="gal">Choose from gallery</label><label class="btn sec" for="fcam" data-pick="cam">Use camera</label></div><div class="row" style="margin-top:10px"><label class="btn sec" for="ffile" data-pick="file">Choose image from files</label></div><p class="sm mu" style="margin:10px 0 0">If nothing opens, open this page in Chrome itself rather than inside another app.</p></div>`}
+  <div class="card sm mu">Tip: a clear, uncropped screenshot with the price axis and EMAs visible gives the most reliable analysis. If it is blurry or cropped, the result will be WAIT.</div>`;
+}
+function pick(k){if(isNative())nativePick(k);else(k==="cam"?$("#fcam"):$("#fgal")).click()}
+function clearImg(){S.file=null;S.prev=null;S.err=null;render()}
+function bind(){
+  const d=$("#drop");if(!d)return;
+  ["dragenter","dragover"].forEach(e=>d.addEventListener(e,x=>{x.preventDefault();d.classList.add("hv")}));
+  ["dragleave","drop"].forEach(e=>d.addEventListener(e,x=>{x.preventDefault();d.classList.remove("hv")}));
+  d.addEventListener("drop",x=>{const f=x.dataTransfer.files[0];if(f)load(f)});
+}
+["#fgal","#fcam","#ffile"].forEach(id=>$(id).addEventListener("change",e=>{const f=e.target.files[0];e.target.value="";if(f)load(f)}));
+function toImg(blob){return new Promise((res,rej)=>{const u=URL.createObjectURL(blob),i=new Image();i.onload=()=>{URL.revokeObjectURL(u);res(i)};i.onerror=()=>{URL.revokeObjectURL(u);rej(new Error("bad"))};i.src=u})}
+function resize(img,max,q){const r=Math.min(1,max/Math.max(img.width,img.height));const c=document.createElement("canvas");c.width=Math.round(img.width*r);c.height=Math.round(img.height*r);c.getContext("2d").drawImage(img,0,0,c.width,c.height);return new Promise(res=>c.toBlob(b=>res({blob:b,url:c.toDataURL("image/jpeg",q),w:c.width,h:c.height}),"image/jpeg",q))}
+const isNative=()=>!!(window.Capacitor&&window.Capacitor.isNativePlatform&&window.Capacitor.isNativePlatform());
+let CamP=null;
+async function nativePick(kind){
+  try{
+    CamP=CamP||window.Capacitor.registerPlugin("Camera");
+    const r=await CamP.getPhoto({source:kind==="cam"?"CAMERA":"PHOTOS",resultType:"dataUrl",quality:92,width:2400,correctOrientation:true,saveToGallery:false});
+    if(!r||!r.dataUrl)throw new Error("no image returned");
+    const blob=await (await fetch(r.dataUrl)).blob();
+    await load(blob);
+  }catch(e){
+    const m=String((e&&(e.message||e))||"");
+    if(/cancel/i.test(m))return;
+    S.err=/permission|denied/i.test(m)?"Permission was denied. Allow Camera access for ChartMind AI in Android Settings > Apps, or use \"Choose image from files\".":"Could not open the "+(kind==="cam"?"camera":"photo picker")+" ("+m.slice(0,80)+"). Try \"Choose image from files\".";
+    render();
+  }
+}
+document.addEventListener("click",e=>{const l=e.target.closest&&e.target.closest("label[data-pick]");if(l&&l.dataset.pick!=="file"&&isNative()){e.preventDefault();nativePick(l.dataset.pick)}});
+async function load(f){
+  S.err=null;
+  const okT=/^image\/(jpeg|png|webp)$/i.test(f.type)||(f.type===""&&/\.(jpe?g|png|webp)$/i.test(f.name))||(f.type.startsWith("image/")&&/heic|heif/i.test(f.type)===false);
+  if(!okT){S.err="Unsupported file type ("+(f.type||"unknown")+"). Please choose a JPG, JPEG, PNG or WEBP image.";return render()}
+  if(f.size>10*1024*1024){S.err="Image is larger than 10 MB. Please upload a smaller screenshot.";return render()}
+  try{
+    const img=await toImg(f);
+    if(img.width<400||img.height<250){S.err="Image is too small ("+img.width+"×"+img.height+"). Please upload a larger, clearer chart screenshot.";return render()}
+    const big=await resize(img,1600,.88),th=await resize(img,360,.6);
+    S.file=big.blob;S.prev=big.url;S.thumb=th.url;S.fname=(f.name||"image")+" · "+img.width+"×"+img.height+" · "+(f.size/1048576).toFixed(1)+" MB";
+  }catch(e){S.err="This image could not be read ("+(f.type||"unknown type")+"). If it is a HEIC photo, take a screenshot of the chart instead or choose a JPG/PNG/WEBP.";}
+  render();
+}
+const PROMPT=`You are ChartMind, a cautious, evidence-first trading chart analyst. You are given ONE screenshot of a trading chart. Inspect the actual image. Never invent information that is not visible. If something cannot be identified, say "Not identifiable" (Arabic: "غير قابل للتحديد").
+
+Run these 7 strategies INDEPENDENTLY, in this order with these ids: ema (EMA 20 / EMA 200), sr (Support & Resistance), sd (Supply & Demand), ob (Order Blocks, fresh vs tested), fvg (Fair Value Gaps, whether price has returned), liq (Liquidity: equal highs/lows, sweeps, stop hunts), brt (Breakout & Retest: confirmed breakout, retest, reject unconfirmed).
+Rules: do not force a signal; if a strategy's conditions are missing or the tool (e.g. EMAs) is not visible, set applicable=false, bias "neutral", confirmed=false and say why. Do not treat a liquidity sweep as a confirmed breakout. Distinguish confirmed from merely possible setups. Avoid contradictions. Never claim a trade is guaranteed. Only give entry/SL/TP as price values actually readable from the price axis and logically justified; otherwise null. Prefer WAIT when evidence is weak, mixed, or the image is blurry, cropped, or lacks a price scale. Compute rr only if entry, SL and TP are all given.
+
+Every human-readable text must be an object {"en":"...","ar":"..."}: English plus a natural Modern Standard Arabic explanation in simple language. Keep each text short (1-2 sentences). Return ONLY valid JSON, no markdown, with this exact shape:
+{"chart":{"quality":"good|fair|poor|unusable","instrument":T,"timeframe":T,"platform":T,"candles":T,"indicators":T,"levels":T,"structure":T,"missing":[T]},
+"strategies":[{"id":"ema","bias":"bullish|bearish|neutral","applicable":true,"confirmed":false,"evidence":T,"zones":T,"explanation":T}, ... all 7],
+"final":{"decision":"BUY|SELL|WAIT","direction":"bullish|bearish|neutral","summary":T,"entry":T|null,"stop_loss":T|null,"take_profit":T|null,"take_profit_reason":T|null,"rr":"string|null","confirmations":[T],"reasons_against":[T],"needs":[T],"setup_status":"confirmed|possible|none"}}
+where T is {"en":string,"ar":string}.`;
+const DEFAULT_BACKEND="";
+async function runAI(){
+  const msg=PROMPT+"\n\nAnalyze the attached chart screenshot now.";
+  if(typeof claude!=="undefined"){try{if(!sampleNS)sampleNS=await claude.use("sample");if(sampleNS){const lim=await sampleNS.limits();if(lim&&lim.images)return await sampleNS.json(msg,{images:[S.file],modelTier:"complex",cache:false})}}catch(e){if(e&&(e.code==="not_granted"||e.code==="rate_limited"))throw e}}
+  const url=(store.get("cm_backend","")||DEFAULT_BACKEND).trim();
+  if(!url)throw new Error("Analysis server is not set up. Open Settings and enter your Server URL and Access token.");
+  const b64=await new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(String(r.result).split(",")[1]);r.onerror=()=>rej(new Error("Could not read the image"));r.readAsDataURL(S.file)});
+  let resp;
+  try{resp=await fetch(url,{method:"POST",headers:{"Content-Type":"application/json","X-App-Token":store.get("cm_token","")},body:JSON.stringify({prompt:msg,image:b64,mediaType:"image/jpeg"})})}catch(e){throw new Error("Cannot reach the analysis server. Check the Server URL and your internet connection.")}
+  if(resp.status===401)throw new Error("The server rejected your access token. Check it in Settings.");
+  if(!resp.ok)throw new Error("Analysis server error ("+resp.status+"). Try again.");
+  const d=await resp.json();
+  const t=String(d.text||"").replace(/```json|```/g,"").trim();
+  const i=t.indexOf("{"),j=t.lastIndexOf("}");
+  if(i<0||j<0)throw new Error("The AI returned an unreadable result");
+  return JSON.parse(t.slice(i,j+1));
+}
+async function analyze(){
+  if(!S.file)return;
+  S.busy=true;S.err=null;render();
+  try{
+    const out=await runAI();
+    const r=validate(out);
+    const rec={id:Date.now().toString(36),ts:Date.now(),thumb:S.thumb,decision:r.final.decision,instrument:r.chart.instrument,timeframe:r.chart.timeframe,result:r,note:r.note||""};
+    S.cur=rec;S.hist.unshift(rec);
+    if(!persist()){S.mem=true}
+    S.busy=false;go("results");
+  }catch(e){
+    S.busy=false;
+    S.err=e&&e.code==="not_granted"?"AI access was declined. Allow it to analyze charts.":e&&e.code==="rate_limited"?"Too many requests. Please wait a moment and try again.":"Analysis failed: "+(e&&e.message||"unknown error")+". Please try again.";
+    render();
+  }
+}
+function persist(){
+  let h=S.hist.slice(0,60);
+  while(h.length&&!store.set("cm_hist",h)){h=h.slice(0,Math.max(0,h.length-5));if(!h.length)return false}
+  S.hist=h;return true;
+}
+function validate(o){
+  if(!o||!o.chart||!Array.isArray(o.strategies)||!o.final)throw new Error("The AI returned an unreadable result");
+  const strategies=STRATS.map(s=>{const f=o.strategies.find(x=>x&&x.id===s[0])||{};return{id:s[0],bias:["bullish","bearish","neutral"].includes(f.bias)?f.bias:"neutral",applicable:f.applicable!==false,confirmed:!!f.confirmed,evidence:f.evidence,zones:f.zones,explanation:f.explanation}});
+  const bull=strategies.filter(s=>s.bias==="bullish").length,bear=strategies.filter(s=>s.bias==="bearish").length;
+  const fin={...o.final};let note="";
+  const poor=["poor","unusable"].includes(o.chart.quality);
+  const need=S.minAgree;
+  if(fin.decision==="BUY"&&(bull<need||bear>=bull||!fin.entry||!fin.stop_loss)){note=`Downgraded to WAIT: BUY needs at least ${need} bullish strategies, more bulls than bears, plus a justified entry and stop loss.`;fin.decision="WAIT"}
+  if(fin.decision==="SELL"&&(bear<need||bull>=bear||!fin.entry||!fin.stop_loss)){note=`Downgraded to WAIT: SELL needs at least ${need} bearish strategies, more bears than bulls, plus a justified entry and stop loss.`;fin.decision="WAIT"}
+  if(poor&&fin.decision!=="WAIT"){fin.decision="WAIT";note="Downgraded to WAIT: image quality is too low for a reliable signal."}
+  if(!["BUY","SELL","WAIT"].includes(fin.decision))fin.decision="WAIT";
+  if(fin.decision==="WAIT"){fin.rr=fin.rr&&fin.entry&&fin.stop_loss?fin.rr:null}
+  return{chart:o.chart,strategies,final:fin,counts:{bull,bear,neu:7-bull-bear},note};
+}
+function results(){
+  const c=S.cur;
+  if(!c)return `<h2>Results</h2><div class="card" style="text-align:center"><div style="font-size:40px">◎</div><h3>No analysis open</h3><p class="mu">Upload a chart or open one from History.</p><button class="btn" onclick="go('upload')">Upload chart</button></div>`;
+  const r=c.result,f=r.final,ch=r.chart,n=r.counts;
+  const dn={BUY:["BUY","شراء"],SELL:["SELL","بيع"],WAIT:["WAIT / NO TRADE","انتظر / لا تداول"]}[f.decision];
+  const dirTxt={bullish:["Bullish","صاعد"],bearish:["Bearish","هابط"],neutral:["Neutral / unclear","محايد / غير واضح"]}[f.direction]||["Neutral / unclear","محايد / غير واضح"];
+  const k=(en,ar)=>isAr()?ar:en;
+  return `<div class="row"><h2 style="flex:2;margin:0">Analysis results</h2><button class="btn sec" style="flex:0 0 auto" onclick="go('strategies')">Strategy breakdown</button></div>${langTabs()}
+  ${c.thumb?`<img class="prev" style="max-height:220px" src="${c.thumb}" alt="Analyzed chart">`:""}
+  ${["poor","unusable"].includes(ch.quality)?`<div class="warn">${k("Image quality is "+esc(ch.quality)+". Please upload a clearer, uncropped screenshot.","جودة الصورة "+esc(ch.quality)+". يرجى رفع صورة أوضح وغير مقصوصة.")}</div>`:""}
+  <div class="dec ${f.decision}" style="margin-top:12px"><div class="v">${isAr()?dn[1]:dn[0]}</div><div class="sm" style="color:var(--tx)">${k("Setup","حالة الإعداد")}: ${esc(({confirmed:k("Confirmed","مؤكد"),possible:k("Possible, not confirmed","محتمل وغير مؤكد"),none:k("No valid setup","لا يوجد إعداد صالح")})[f.setup_status]||"—")}</div></div>
+  ${c.note||r.note?`<div class="warn">${esc(r.note)}</div>`:""}
+  <div class="card"><h3>${k("Summary","الملخص")}</h3>${txb(f.summary)}<p class="sm mu" style="margin:10px 0 0">${k("Overall direction","اتجاه السوق العام")}: <b style="color:var(--tx)">${isAr()?dirTxt[1]:dirTxt[0]}</b></p></div>
+  <div class="grid3"><div><b style="color:var(--g)">${n.bull}</b><span class="sm mu">${k("Bullish","صاعد")}</span></div><div><b style="color:var(--r)">${n.bear}</b><span class="sm mu">${k("Bearish","هابط")}</span></div><div><b>${n.neu}</b><span class="sm mu">${k("Neutral","محايد")}</span></div></div>
+  <div class="card"><h3>${k("Trade plan","خطة الصفقة")}</h3><dl class="kv">
+  <dt>${k("Entry zone","منطقة الدخول")}</dt><dd>${f.entry?txb(f.entry):`<span class="mu">${k("Not justified","غير مبرر")}</span>`}</dd>
+  <dt>${k("Stop loss","وقف الخسارة")}</dt><dd>${f.stop_loss?txb(f.stop_loss):`<span class="mu">${k("Not identifiable","غير قابل للتحديد")}</span>`}</dd>
+  <dt>${k("Take profit","جني الأرباح")}</dt><dd>${f.take_profit?txb(f.take_profit)+(f.take_profit_reason?`<div class="sm mu">${tx(f.take_profit_reason)}</div>`:""):`<span class="mu">${k("Not identifiable","غير قابل للتحديد")}</span>`}</dd>
+  <dt>R:R</dt><dd>${esc(f.rr)||`<span class="mu">${k("Not calculable","غير قابل للحساب")}</span>`}</dd></dl></div>
+  <div class="card"><h3>${k("Confirmation needed","شروط التأكيد")}</h3>${lst(f.confirmations)}</div>
+  <div class="card"><h3>${k("Reasons not to enter","أسباب عدم الدخول")}</h3>${lst(f.reasons_against)}${(f.needs&&f.needs.length)?`<h3 style="margin-top:12px">${k("What is missing","ما ينقص")}</h3>${lst(f.needs)}`:""}</div>
+  <div class="card"><h3>${k("Detected from chart","ما تم رصده من الشارت")}</h3><dl class="kv">
+  <dt>${k("Instrument","الأداة")}</dt><dd>${tx(ch.instrument)}</dd><dt>${k("Timeframe","الإطار الزمني")}</dt><dd>${tx(ch.timeframe)}</dd><dt>${k("Platform","المنصة")}</dt><dd>${tx(ch.platform)}</dd><dt>${k("Candles","الشموع")}</dt><dd>${tx(ch.candles)}</dd><dt>${k("Indicators","المؤشرات")}</dt><dd>${tx(ch.indicators)}</dd><dt>${k("Key levels","المستويات")}</dt><dd>${tx(ch.levels)}</dd><dt>${k("Structure","الهيكل")}</dt><dd>${tx(ch.structure)}</dd></dl></div>
+  <p class="sm mu">${k("This is educational analysis from a screenshot, not financial advice. No outcome is guaranteed. Always verify on a live chart and manage risk.","هذا تحليل تعليمي من لقطة شاشة وليس نصيحة مالية. لا توجد نتيجة مضمونة. تحقق دائماً على الشارت المباشر وأدر المخاطر.")}</p>
+  <button class="btn" style="width:100%" onclick="go('upload')">${k("Analyze another chart","تحليل شارت آخر")}</button>`;
+}
+function strategies(){
+  const c=S.cur;if(!c)return results();
+  const k=(en,ar)=>isAr()?ar:en;
+  return `<div class="row"><h2 style="flex:2;margin:0">Strategy breakdown</h2><button class="btn sec" style="flex:0 0 auto" onclick="go('results')">Back</button></div>${langTabs()}
+  ${c.result.strategies.map((s,i)=>`<div class="card strat ${s.bias==='bullish'?'bull':s.bias==='bearish'?'bear':''}"><div class="row" style="justify-content:space-between"><h3 style="margin:0;flex:2">${i+1}. ${isAr()?STRATS[i][2]:STRATS[i][1]}</h3>${tag(s.bias)}</div>
+  <div class="sm" style="margin:6px 0">${s.applicable?"":`<span class="tag neu">${k("Not applicable here","غير قابل للتطبيق")}</span> `}<span class="tag ${s.confirmed?'bull':'neu'}">${s.confirmed?k("Entry conditions confirmed","شروط الدخول مؤكدة"):k("Entry not confirmed","الدخول غير مؤكد")}</span></div>
+  <p class="sm mu" style="margin:8px 0 2px">${k("Evidence","الدليل")}</p>${txb(s.evidence)}
+  <p class="sm mu" style="margin:8px 0 2px">${k("Important zones","المناطق المهمة")}</p>${txb(s.zones)}
+  <p class="sm mu" style="margin:8px 0 2px">${k("Explanation","الشرح")}</p>${txb(s.explanation)}</div>`).join("")}`;
+}
+function histItem(h){
+  const c={BUY:"bull",SELL:"bear",WAIT:"neu"}[h.decision];
+  return `<div class="card hist" onclick="openH('${h.id}')">${h.thumb?`<img src="${h.thumb}" alt="">`:""}<div><b>${esc(T(h.instrument)||"Unknown")}</b> <span class="mu sm">${esc(T(h.timeframe)||"")}</span><div class="sm mu">${new Date(h.ts).toLocaleString()}</div></div><span class="tag ${c}">${h.decision}</span></div>`;
+}
+function openH(id){const h=S.hist.find(x=>x.id===id);if(h){S.cur=h;go("results")}}
+function historyView(){
+  return `<h2>Analysis history</h2>${S.mem?`<div class="warn sm">Storage is full or unavailable, so older analyses may not be saved.</div>`:""}
+  ${S.hist.length?S.hist.map(h=>`<div>${histItem(h)}<div style="text-align:right;margin:-6px 0 6px"><button class="btn dng" style="padding:6px 12px;font-size:13px" onclick="del('${h.id}')">Delete</button></div></div>`).join(""):`<div class="card" style="text-align:center"><div style="font-size:40px">🕘</div><h3>No saved analyses</h3><p class="mu">Your analyses appear here with the screenshot, decision, and strategy results.</p><button class="btn" onclick="go('upload')">Analyze a chart</button></div>`}`;
+}
+function del(id){if(!confirm("Delete this analysis?"))return;S.hist=S.hist.filter(h=>h.id!==id);if(S.cur&&S.cur.id===id)S.cur=null;store.set("cm_hist",S.hist);render()}
+function settings(){
+  return `<h2>Settings</h2>
+  <div class="card"><h3>Explanation language</h3><p class="sm mu">Interface stays in English. Trading explanations can be shown in Arabic or English.</p>${langTabs()}</div>
+  <div class="card"><h3>Signal strictness</h3><p class="sm mu">Minimum agreeing strategies required for BUY or SELL: <b id="mv" style="color:var(--tx)">${S.minAgree}</b> of 7. Higher means fewer, safer signals. Applies to new analyses.</p><input type="range" min="3" max="6" value="${S.minAgree}" oninput="S.minAgree=+this.value;store.set('cm_min',S.minAgree);document.getElementById('mv').textContent=this.value"></div>
+  <div class="card"><h3>Data</h3><p class="sm mu">History is stored only in this browser. Screenshots are sent to Claude for analysis and not kept by this app anywhere else.</p><button class="btn dng" onclick="if(confirm('Delete all history?')){S.hist=[];S.cur=null;store.set('cm_hist',[]);render()}">Clear all history</button></div>
+  <div class="card"><h3>Analysis server</h3><p class="sm mu">Needed in the Android app. Enter the URL of your own server (see README) and its access token. Stored only on this device.</p><input id="cmb" type="url" placeholder="https://your-worker.workers.dev" value="${esc(store.get('cm_backend',''))}" style="width:100%;padding:10px;margin-bottom:8px;background:var(--s1);color:var(--tx);border:1px solid var(--bd);border-radius:10px;font:inherit" onchange="store.set('cm_backend',this.value.trim())"><input id="cmt" type="password" placeholder="Access token" value="${esc(store.get('cm_token',''))}" style="width:100%;padding:10px;background:var(--s1);color:var(--tx);border:1px solid var(--bd);border-radius:10px;font:inherit" onchange="store.set('cm_token',this.value.trim())"></div>
+  <div class="card"><h3>About</h3><p class="sm mu" style="margin:0">ChartMind AI uses Claude vision through your own secure server, so no API key is ever stored in this app. Educational use only. Not financial advice.</p></div>`;
+}
+render();
+</script></body></html>
